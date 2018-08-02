@@ -105,43 +105,47 @@ class MraaIo
         }
     }
 
-    MraaIo() : descs() {}
+    MraaIo() : descs()
+    {
+    }
 
     ~MraaIo()
     {
-        if (descs->leftover_str) {
-            free(descs->leftover_str);
-        }
+        if (descs != NULL) {
+            if (descs->leftover_str) {
+                free(descs->leftover_str);
+            }
 
-        if (descs->n_aio) {
-            free(descs->aios);
-        }
-        if (descs->n_gpio) {
-            free(descs->gpios);
-        }
-        if (descs->n_i2c) {
-            free(descs->i2cs);
-        }
+            if (descs->n_aio) {
+                free(descs->aios);
+            }
+            if (descs->n_gpio) {
+                free(descs->gpios);
+            }
+            if (descs->n_i2c) {
+                free(descs->i2cs);
+            }
 #if !defined(PERIPHERALMAN)
-        if (descs->n_iio) {
-            free(descs->iios);
-        }
+            if (descs->n_iio) {
+                free(descs->iios);
+            }
 #endif
-        if (descs->n_pwm) {
-            free(descs->pwms);
-        }
-        if (descs->n_spi) {
-            free(descs->spis);
-        }
-        if (descs->n_uart) {
-            free(descs->uarts);
-        }
-        if (descs->n_uart_ow) {
-            free(descs->uart_ows);
-        }
+            if (descs->n_pwm) {
+                free(descs->pwms);
+            }
+            if (descs->n_spi) {
+                free(descs->spis);
+            }
+            if (descs->n_uart) {
+                free(descs->uarts);
+            }
+            if (descs->n_uart_ow) {
+                free(descs->uart_ows);
+            }
 
-        /* Finally free the mraa_io_descriptor structure. */
-        free(descs);
+            /* Finally free the mraa_io_descriptor structure. */
+            free(descs);
+        }
     }
 
   public:

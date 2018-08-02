@@ -67,6 +67,11 @@ mraa_tokenize_string(const char* str, const char* delims, int* num_tokens)
     char** output = NULL;
     size_t output_size = 0;
 
+    if (str == NULL) {
+        syslog(LOG_ERR, "mraa_tokenize_string: NULL string");
+        return NULL;
+    }
+
     p_str = strdup(str);
 
     for (s = p_str;; s = NULL) {
@@ -611,9 +616,21 @@ mraa_io_init(const char* strdesc, mraa_io_descriptor** desc)
 
     int num_descs = 0;
     char** str_descs = mraa_tokenize_string(strdesc, DESC_SEP, &num_descs);
+    if (str_descs == NULL) {
+        syslog(LOG_ERR, "mraa_io_init: tokenization error on init string '%s'", strdesc);
+        free(new_desc);
+        return MRAA_ERROR_INVALID_PARAMETER;
+    }
+
     for (int i = 0; i < num_descs; ++i) {
         int num_desc_tokens = 0;
         char** str_tokens = mraa_tokenize_string(str_descs[i], TOK_SEP, &num_desc_tokens);
+        if (str_tokens == NULL) {
+            syslog(LOG_ERR, "mraa_io_init: tokenization error on init string '%s'", str_descs[i]);
+            status = MRAA_ERROR_INVALID_HANDLE;
+            free(new_desc);
+            break;
+        }
 
         if (strncmp(str_tokens[0], AIO_KEY, strlen(AIO_KEY)) == 0 && strlen(str_tokens[0]) == strlen(AIO_KEY)) {
             mraa_aio_context dev = parse_aio(str_tokens, num_desc_tokens, str_descs[i]);
